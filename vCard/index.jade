@@ -30,14 +30,15 @@ html
         h1 Accounts9 -&gt; vCard
         ul#groups
         table#colleague.table
-          tr
-            th 姓名
-            th 昵稱
-            th 郵箱
-            th 電話
-            th 出生日期
+          thead
+            tr
+              th 姓名
+              th 昵稱
+              th 郵箱
+              th 電話
+              th 出生日期
         hr
-        a#export.btn(href='#') 另存爲 vCard 文件
+        a#export.btn(href='#', download='contacts.vcf') 另存爲 vCard 文件
         hr
         h2 Q&A
 
