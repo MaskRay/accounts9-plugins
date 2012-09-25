@@ -25,7 +25,6 @@ parseComps = (loc) ->
     res[decodeURIComponent pair[0]] = decodeURIComponent pair[1]
   res
 
-
 accounts9_access_token = null
 
 showGroup = ->
@@ -34,14 +33,10 @@ showGroup = ->
   $('#colleague tr:not(:first)').remove()
   $('#groups a').removeClass 'navy'
   $(this).addClass 'navy'
-  console.log this
   $.getJSON GROUPINFO, access_token: accounts9_access_token, group: group, (data) ->
     vcards = []
-    cnt = data.group.users.length
-
-    $('#export').unbind().click (ev) ->
+    $('#export').click (ev) ->
       ev.preventDefault()
-      vcards = []
       $('#colleague tr:gt(0)').each ->
         vcards.push 'BEGIN:VCARD'
         vcards.push 'VERSION:4.0'
@@ -52,7 +47,7 @@ showGroup = ->
         vcards.push 'BDAY:' + this.cells[4].textContent
         vcards.push 'REL:' + isoDate(new Date())
         vcards.push 'END:VCARD'
-      window.location.href = 'data:text/vcard;base64,' + Base64.encode(vcards.join('\n'))
+      window.location = 'data:text/vcard;base64,' + Base64.encode(vcards.join('\n'))
 
     for user in data.group.users
       $.getJSON USERINFO, access_token: accounts9_access_token, user: user, (data) ->
@@ -65,8 +60,7 @@ showGroup = ->
           .append(td(u.mobile))
           .append(td(u.birthdate))
 
-
-showGroups = () ->
+showGroups = ->
   return unless accounts9_access_token
   $('#nav').empty().append('<li><a class="btn" id="username"></a></li>').append '<li><a class="btn" href="/accounts9_contacts">登出</a></li>'
   $.getJSON USERINFO, access_token: accounts9_access_token, (data) ->
@@ -75,17 +69,15 @@ showGroups = () ->
     for group in data.user.groups
       a = $('<a class="btn" href="#">').text(group).click showGroup
       $('#groups').append $('<li>').append a
-      if /^class/.test group
-        clas = a
+      clas = a if /^class/.test group
     showGroup.call clas if clas
 
 $ ->
-  $('#login').prop 'href', AUTHORIZE+'?'+$.param(
+  $('#login').prop 'href', AUTHORIZE+'?'+$.param
     response_type: 'code'
     redirect_uri: SITE
     scope: 'https://accounts.net9.org/api'
     client_id: CLIENT_ID
-  )
 
   query = parseComps window.location.search
 
