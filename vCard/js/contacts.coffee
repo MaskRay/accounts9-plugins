@@ -25,11 +25,6 @@ parseComps = (loc) ->
     res[decodeURIComponent pair[0]] = decodeURIComponent pair[1]
   res
 
-comps =
-  response_type: 'code'
-  redirect_uri: SITE
-  scope: 'https://accounts.net9.org/api'
-  client_id: CLIENT_ID
 
 accounts9_access_token = null
 
@@ -85,12 +80,18 @@ showGroups = () ->
     showGroup.call clas if clas
 
 $ ->
-  $('#login').prop 'href', AUTHORIZE+'?'+$.param(comps)
+  $('#login').prop 'href', AUTHORIZE+'?'+$.param(
+    response_type: 'code'
+    redirect_uri: SITE
+    scope: 'https://accounts.net9.org/api'
+    client_id: CLIENT_ID
+  )
 
   query = parseComps window.location.search
 
   if query.access_token
     accounts9_access_token = query.access_token
+    showGroups()
   else if query.code
     comps =
       response_type: 'token'
@@ -100,5 +101,6 @@ $ ->
       client_secret: CLIENT_SECRET
       code: query['code']
     $.getJSON ACCESS_TOKEN, comps, (data) ->
+      history.replaceState null, document.title, '?access_token=' + data.access_token
       accounts9_access_token = data.access_token
       showGroups()
