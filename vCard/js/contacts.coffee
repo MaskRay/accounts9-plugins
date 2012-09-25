@@ -1,4 +1,5 @@
-SITE = 'http://maskray.tk/accounts9-contacts/'
+#SITE = 'http://maskray.tk/accounts9-contacts/'
+SITE = 'http://localhost/accounts9-contacts/'
 USERINFO = 'https://accounts9.net9.org/api/userinfo'
 GROUPINFO = 'https://accounts9.net9.org/api/groupinfo'
 AUTHORIZE = 'https://accounts9.net9.org/api/authorize'
@@ -32,41 +33,54 @@ comps =
 
 accounts9_access_token = null
 
-showClassmates = () ->
+showGroup = ->
   return unless accounts9_access_token
-  $('#nav').empty().append('<li id="username"></li>').append '<li><a class="btn" href="/accounts9_contacts">登出</a></li>'
+  group = $(this).text()
+  $('#colleague tr:not(:first)').remove()
+  $('#groups a').removeClass 'navy'
+  $(this).addClass 'navy'
+  console.log this
+  $.getJSON GROUPINFO, access_token: accounts9_access_token, group: group, (data) ->
+    vcards = []
+    cnt = data.group.users.length
+    for user in data.group.users
+      $.getJSON USERINFO, access_token: accounts9_access_token, user: user, (data) ->
+        u = data.user
+        td = (s) -> $('<td/>').text s
+        $('#colleague').append $('<tr/>')
+          .append(td(u.fullname))
+          .append(td(u.nickname))
+          .append(td(u.email))
+          .append(td(u.mobile))
+          .append(td(u.birthdate))
+
+          vcards.push 'BEGIN:VCARD'
+          vcards.push 'VERSION:4.0'
+          vcards.push 'FN:' + u.fullname
+          vcards.push 'NICKNAME:' + u.nickname
+          vcards.push 'BDAY:' + u.birthdate
+          vcards.push 'TEL:' + u.mobile
+          vcards.push 'EMAIL:' + u.email
+          vcards.push 'REL:' + isoDate(new Date())
+          vcards.push 'END:VCARD'
+
+        if --cnt is 0
+          $('#export').prop 'href', 'data:text/vcard;base64,' + Base64.encode(vcards.join('\n'))
+          $('#export').prop 'download', 'contacts.vcf'
+          $('#export').show()
+
+showGroups = () ->
+  return unless accounts9_access_token
+  $('#nav').empty().append('<li><a class="btn" id="username"></a></li>').append '<li><a class="btn" href="/accounts9_contacts">登出</a></li>'
   $.getJSON USERINFO, access_token: accounts9_access_token, (data) ->
     $('#username').text data.user.fullname
-    for clas in data.user.groups
-      if /^class/.test clas
-        $('#export').show()
-        $.getJSON GROUPINFO, access_token: accounts9_access_token, group: clas, (data) ->
-          vcards = []
-          cnt = data.group.users.length
-          for user in data.group.users
-            $.getJSON USERINFO, access_token: accounts9_access_token, user: user, (data) ->
-              u = data.user
-              td = (s) -> $('<td/>').text s
-              $('#classmates').append $('<tr/>')
-                .append(td(u.fullname))
-                .append(td(u.nickname))
-                .append(td(u.email))
-                .append(td(u.mobile))
-                .append(td(u.birthdate))
-
-              vcards.push 'BEGIN:VCARD'
-              vcards.push 'VERSION:4.0'
-              vcards.push 'FN:' + u.fullname
-              vcards.push 'NICKNAME:' + u.nickname
-              vcards.push 'BDAY:' + u.birthdate
-              vcards.push 'TEL:' + u.mobile
-              vcards.push 'EMAIL:' + u.email
-              vcards.push 'REL:' + isoDate(new Date())
-              vcards.push 'END:VCARD'
-
-              if --cnt is 0
-                $('#export').prop 'href', 'data:text/vcard;base64,' + Base64.encode(vcards.join('\n'))
-                $('#export').prop 'download', 'contacts.vcf'
+    clas = null
+    for group in data.user.groups
+      a = $('<a class="btn" href="#">').text(group).click showGroup
+      $('#groups').append $('<li>').append a
+      if /^class/.test group
+        clas = a
+    showGroup.call clas if clas
 
 $ ->
   $('#export').hide()
@@ -74,7 +88,9 @@ $ ->
 
   query = parseComps window.location.search
 
-  if query.code
+  if query.access_token
+    accounts9_access_token = query.access_token
+  else if query.code
     comps =
       response_type: 'token'
       redirect_uri: SITE
@@ -84,4 +100,4 @@ $ ->
       code: query['code']
     $.getJSON ACCESS_TOKEN, comps, (data) ->
       accounts9_access_token = data.access_token
-      showClassmates()
+      showGroups()

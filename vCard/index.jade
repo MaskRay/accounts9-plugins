@@ -7,6 +7,16 @@ html
       h3 {
         color: blue;
       }
+      #groups > li {
+        display: inline;
+        list-style-type: none;
+      }
+      #groups {
+        padding-left: 0px;
+      }
+      .btn.navy {
+        background-color: navy;
+      }
     script(src='text/javascript', src='js/jquery-1.7.1.min.js')
     script(src='text/javascript', src='js/base64.js')
     script(src='text/javascript', src='js/contacts.js')
@@ -18,7 +28,8 @@ html
           li: a#login.btn(href='#') 登入
       #content
         h1 Accounts9 -&gt; vCard
-        table#classmates.table
+        ul#groups
+        table#colleague.table
           tr
             th 姓名
             th 昵稱
@@ -46,3 +57,15 @@ html
         h3 Google Contacts 中如何導入 vCard 文件？
         p 用 More -- Import 選項導入生成的 vCard 文件
         img(alt='', src='img/more.jpg')
+
+        hr
+        h2 原始碼
+
+        a(href='https://github.com/MaskRay/accounts9-plugins') 託管在 Github 上
+        ul
+          li 語言：
+            a(href='http://coffeescript.org') CoffeeScript
+          li HTML 模板引擎：
+            a(href='http://jade-lang.com') Jade
+          li 主題：
+            a(href='http://accounts.net9.org') Accounts9
