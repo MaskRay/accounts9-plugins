@@ -1,0 +1,48 @@
+doctype 5
+html
+  head
+    meta(charset='utf-8')
+    link(rel='stylesheet', href='css/style.min.css')
+    style(type='text/css')
+      h3 {
+        color: blue;
+      }
+    script(src='text/javascript', src='js/jquery-1.7.1.min.js')
+    script(src='text/javascript', src='js/base64.js')
+    script(src='text/javascript', src='js/contacts.js')
+  body
+    #page
+      #header
+        #logo Accounts9-Contacts
+        ul#nav
+          li: a#login.btn(href='#') 登入
+      #content
+        h1 Accounts9 -&gt; vCard
+        table#classmates.table
+          tr
+            th 姓名
+            th 昵稱
+            th 郵箱
+            th 電話
+            th 出生日期
+        hr
+        a#export.btn(href='#') 另存爲 vCard 文件
+        hr
+        h2 Q&A
+
+        h3 什麼是郵件列表
+        p: a(href='http://en.wikipedia.org/wiki/Mailing_list') 參考 Wikipedia 的釋義
+
+        h3 爲什麼不要用 QQ 郵箱
+        p QQ 郵箱的郵件系統可能會打斷線索。關於線索可以參考這篇文章：
+          a(href='http://cr.yp.to/immhf/thread.html') Threading: Message-ID, References, In-Reply-To
+
+        h3 什麼是 vCard？
+        a(href='http://en.wikipedia.org/wiki/VCard') Wikipedia 上的釋義
+
+        h3 Gmail 中如何進入 Google Contacts？
+        img(alt='', src='img/contacts.jpg')
+
+        h3 Google Contacts 中如何導入 vCard 文件？
+        p 用 More -- Import 選項導入生成的 vCard 文件
+        img(alt='', src='img/more.jpg')
