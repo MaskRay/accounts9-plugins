@@ -1,4 +1,4 @@
-SITE = 'http://maskray.tk/accounts9-contacts/'
+SITE = 'http://maskray.me/portfolio/accounts9-plugins/vCard'
 #SITE = 'http://localhost/accounts9-contacts/'
 USERINFO = 'https://accounts9.net9.org/api/userinfo'
 GROUPINFO = 'https://accounts9.net9.org/api/groupinfo'
